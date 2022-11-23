@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>妖怪杀手</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://unpkg.com/vue@next" defer></script>
+  <script src="app.js" defer></script>
+</head>
+
+<body>
+  <header>
+    <h1>Monster Slayer</h1>
+    <h2>妖怪杀手</h2>
+  </header>
+
+  <div id="game">
+
+    <section id="monster" class="container">
+      <h2>Monster Health 妖怪生命值</h2>
+      <div class="healthbar">
+        <div class="healthbar__value" :style="monsterBarStyle"></div>
+      </div>
+    </section>
+
+
+    <section id="player" class="container">
+      <h2>Your Health 你的生命值</h2>
+      <div class="healthbar">
+        <div class="healthbar__value" :style="playerBarStyle"></div>
+      </div>
+    </section>
+
+    <section class="container" v-if="winner">
+      <h2 v-if="winner === 'monster'" class="log--damage">You Lost! 你输了！</h2>
+      <h2 v-else-if=" winner ==='player'" class="log--damage">You Win! 你赢了！</h2>
+      <h2 v-else class="log--damage">It's a draw! 平局</h2>
+      <button @click="startNewGame">Start New Game<br />重新开始</button>
+    </section>
+
+    <section id="controls" v-else>
+      <button @click="attackMonster">ATTACK<br />攻击</button>
+      <button :disabled="mayUseSpecialAttack" @click="specialAttack">SPECIAL
+        ATTACK<br />特殊攻击</button>
+      <button :disabled="mayUseHeal" @click="healPlayer">HEAL<br />治疗</button>
+      <button @click="surrender">SURRENDER<br />逃跑</button>
+    </section>
+
+
+    <section id="log" class="container">
+      <h2>Battle Log 战斗记录</h2>
+      <ul>
+        <li v-for="logMessage in logMessages">
+          <span v-if="logMessage.actionBy === 'player'"><span class="log--player">你</span>
+            <span v-if="logMessage.actionType === 'heal'">使用了治疗
+              <span class="log--heal">{{"恢复"+logMessage.actionValue +"点"}}</span>血量</span>
+            <span v-else-if="logMessage.actionType === 'attack'">对妖怪造成了
+              <span class="log--damage">{{logMessage.actionValue + '点攻击'}}</span>伤害</span>
+            <span v-else-if="logMessage.actionType === 'specialAttack'">对妖怪造成了
+              <span class="log--damage">{{logMessage.actionValue + '点特殊攻击'}}</span>伤害</span>
+            <span v-else-if="logMessage.actionType === 'win'">打败了妖怪</span>
+            <span v-else-if="logMessage.actionType === 'surrender'">逃跑了</span>
+          </span>
+          <span v-else-if="logMessage.actionBy === 'monster'"><span class="log--monster">妖怪</span>
+            <span v-if="logMessage.actionType === 'attack'">对你造成了
+              <span class="log--damage">{{logMessage.actionValue + '点回击'}}</span>伤害</span>
+            <span v-else-if="logMessage.actionType === 'win'">打败了你</span>
+          </span>
+          <span v-else>平局</span>
+        </li>
+      </ul>
+    </section>
+
+
+  </div>
+</body>
+
+</html>
